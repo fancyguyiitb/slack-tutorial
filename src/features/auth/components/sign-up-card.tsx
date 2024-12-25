@@ -28,10 +28,43 @@ const SignUpCard = ({ setState }: SignUpCardProps) => {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
 
-  const onPasswordSignUp = (e: React.FormEvent<HTMLFormElement>) => {
+  const onPasswordSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError(""); // Clear previous errors
+
+    // Validate password length and complexity
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(password)) {
+      setError(
+        "Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character."
+      );
+      return;
+    }
+
     if (password !== confirmpassword) {
       setError("Passwords do not match");
+      return;
+    }
+
+    // Check if the password is not commonly leaked (optional but recommended)
+    try {
+      const response = await fetch(
+        `https://api.pwnedpasswords.com/range/${password.substring(0, 5)}`
+      );
+      const data = await response.text();
+      const hashSuffix = password.substring(5).toUpperCase();
+      const leaked = data.includes(hashSuffix);
+      if (leaked) {
+        setError(
+          "This password has been exposed in a data breach. Please choose a different one."
+        );
+        return;
+      }
+    } catch {
+      setError(
+        "Unable to verify password security at the moment. Please try again."
+      );
       return;
     }
 
