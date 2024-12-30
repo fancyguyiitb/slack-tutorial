@@ -17,8 +17,8 @@ const Home = () => {
     if (isLoading) return;
 
     if (workSpaceId) {
-      // console.log("Redirect to workspace");
-      router.replace(`/workspace/${workSpaceId}}`);
+      // console.log("Redirect to workspace", workSpaceId);
+      router.replace(`/workspace/${workSpaceId}`);
     } else if (!open) {
       setOpen(true);
     }
