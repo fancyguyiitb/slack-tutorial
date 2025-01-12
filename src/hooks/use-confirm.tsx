@@ -1,19 +1,25 @@
-interface useConfirmProps {
-  title: string;
-  message: string;
-}
+// interface useConfirmProps {
+//   title: string;
+//   message: string;
+// }
+import React from "react";
 
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  // DialogTrigger,
 } from "@/components/ui/dialog";
 import { useState } from "react";
 
-const useConfirm = (title: string, message: string): [any, any] => {
+const useConfirm = (
+  title: string,
+  message: string
+): [() => JSX.Element, () => Promise<unknown>] => {
   const [promise, setPromise] = useState<{
     resolve: (value: boolean) => void;
   } | null>(null);
@@ -22,7 +28,39 @@ const useConfirm = (title: string, message: string): [any, any] => {
     new Promise((resolve, reject) => {
       setPromise({ resolve });
     });
-  return ["", ""];
+
+  const handleClose = () => {
+    setPromise(null);
+  };
+
+  const handleCancel = () => {
+    promise?.resolve(false);
+    handleClose();
+  };
+
+  const handleConfirm = () => {
+    promise?.resolve(true);
+    handleClose();
+  };
+
+  const ConfirmDialog = () => (
+    <Dialog open={promise !== null}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription>{message}</DialogDescription>
+        </DialogHeader>
+
+        <DialogFooter className="pt-2">
+          <Button onClick={handleCancel} variant="outline">
+            Cancel
+          </Button>
+          <Button onClick={handleConfirm}>Confirm</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+  return [ConfirmDialog, confirm];
 };
 
 export default useConfirm;
