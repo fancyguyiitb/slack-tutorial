@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useCreateChannel } from "../api/use-create-channel";
 import { useWorkspaceId } from "@/hooks/use-workspace-id";
+import { toast } from "sonner";
 
 export const CreateChannelModal = () => {
   const workspaceId = useWorkspaceId();
@@ -38,6 +39,7 @@ export const CreateChannelModal = () => {
         onSuccess: (id) => {
           //redirect to new channel
           handleClose();
+          toast.success("New channel created!");
         },
       }
     );

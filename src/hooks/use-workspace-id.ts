@@ -14,9 +14,9 @@ export const useWorkspaceId = (): Id<"workspaces"> => {
   const params = useParams();
   const workspaceId = params.workspaceId;
 
-  if (!workspaceId) {
-    throw new Error("Workspace ID is missing from the URL.");
-  }
+  // if (!workspaceId) {
+  //   throw new Error("Workspace ID is missing from the URL.");
+  // }
 
   // Cast the string to Id<"workspaces">
   return workspaceId as Id<"workspaces">;
