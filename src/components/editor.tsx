@@ -13,6 +13,7 @@ import { MdSend } from "react-icons/md";
 import { ImageIcon, Smile } from "lucide-react";
 import Hint from "./hint";
 import { cn } from "@/lib/utils";
+import EmojiPopover from "./emoji-popover";
 
 type EditorValue = {
   image: File | null;
@@ -31,7 +32,6 @@ interface EditorProps {
 //we will rely heaVILY on refs as reefs dont have to be passed as dependency arrays in use effect and do not cause re-renders
 
 const Editor = ({
-  onCancel,
   onSubmit,
   defaultValue = [],
   placeholder = "Write something...",
@@ -139,6 +139,12 @@ const Editor = ({
     }
   };
 
+  const onEmojiSelect = (emoji: any) => {
+    const quill = quillRef.current;
+
+    quill?.insertText(quill?.getSelection()?.index || 0, emoji.native);
+  };
+
   //removing empty html tags so we don't send empty messages
   const isEmpty = text.replace(/<(.|\n)*?>/g, "").trim().length === 0;
 
@@ -160,16 +166,11 @@ const Editor = ({
             </Button>
           </Hint>
 
-          <Hint label="Emojis">
-            <Button
-              disabled={false}
-              size="iconSm"
-              variant="ghost"
-              onClick={() => {}}
-            >
+          <EmojiPopover hint="Emojis" onEmojiSelect={onEmojiSelect}>
+            <Button disabled={false} size="iconSm" variant="ghost">
               <Smile className="size-4" />
             </Button>
-          </Hint>
+          </EmojiPopover>
 
           {variant === "create" && (
             <Hint label="Add image">
@@ -225,11 +226,18 @@ const Editor = ({
           )}
         </div>
       </div>
-      <div className="p-2 text-[10px] text-muted-foreground flex justify-end">
-        <p>
-          <strong>Shift + Return</strong> to add a new line
-        </p>
-      </div>
+      {variant === "create" && (
+        <div
+          className={cn(
+            "p-2 text-[10px] text-muted-foreground flex justify-end opacity-0 transition",
+            !isEmpty && "opacity-100"
+          )}
+        >
+          <p>
+            <strong>Shift + Return</strong> to add a new line
+          </p>
+        </div>
+      )}
     </div>
   );
 };
