@@ -10,6 +10,7 @@ const schema = defineSchema({
     userId: v.id("users"),
     joinCode: v.string(),
   }),
+
   members: defineTable({
     userId: v.id("users"),
     workspaceId: v.id("workspaces"),
@@ -18,10 +19,22 @@ const schema = defineSchema({
     .index("by_user_id", ["userId"])
     .index("by_workspace_id", ["workspaceId"])
     .index("by_workspace_id_user_id", ["workspaceId", "userId"]),
+
   channels: defineTable({
     name: v.string(),
     workspaceId: v.id("workspaces"),
   }).index("by_workspace_id", ["workspaceId"]),
+
+  messages: defineTable({
+    body: v.string(),
+    image: v.optional(v.id("_storage")),
+    memberId: v.id("members"),
+    workspaceId: v.id("workspaces"),
+    channelId: v.optional(v.id("channels")),
+    parentMessageId: v.optional(v.id("messages")),
+    //todo: add conversationId
+    updatedAt: v.number(),
+  }),
 });
 
 export default schema;
