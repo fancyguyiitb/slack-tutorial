@@ -1,5 +1,11 @@
 import { GetMessageReturnType } from "@/features/messages/api/use-get-messages";
-import { format, formatDate, isToday, isYesterday } from "date-fns";
+import {
+  differenceInMinutes,
+  format,
+  formatDate,
+  isToday,
+  isYesterday,
+} from "date-fns";
 import Message from "./message";
 
 interface MessageListProps {
@@ -13,6 +19,7 @@ interface MessageListProps {
   isLoadingMore: boolean;
   canLoadMore: boolean;
 }
+const TIME_THRESHOLD = 3;
 
 const formatDateLabel = (dateStr: string) => {
   const date = new Date(dateStr);
@@ -60,8 +67,18 @@ const MessageList = ({
             </span>
           </div>
 
-          {messages.map((message, index) => (
-            <div key={message._id}>
+          {messages.map((message, index) => {
+            //if user sends multiple messages together, group them using compact version
+            const prevMessage = messages[index - 1];
+            const isCompact =
+              prevMessage &&
+              prevMessage.user?._id === message.user._id &&
+              differenceInMinutes(
+                new Date(message._creationTime),
+                new Date(prevMessage._creationTime)
+              ) < TIME_THRESHOLD;
+
+            return (
               <Message
                 key={message._id}
                 id={message._id}
@@ -79,11 +96,11 @@ const MessageList = ({
                 threadTimestamp={message.threadTimeStamp}
                 isEditing={false}
                 setEditingId={() => {}}
-                isCompact={false}
+                isCompact={isCompact}
                 hideThreadButton={false}
               />
-            </div>
-          ))}
+            );
+          })}
         </div>
       ))}
     </div>
