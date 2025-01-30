@@ -3,6 +3,7 @@ import { Doc, Id } from "../../convex/_generated/dataModel";
 import { format, isToday, isYesterday } from "date-fns";
 import Hint from "./hint";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import Thumbnail from "./thumbnail";
 
 const Renderer = dynamic(() => import("@/components/renderer"), { ssr: false });
 
@@ -68,6 +69,7 @@ const Message = ({
 
           <div className="flex flex-col w-full">
             <Renderer value={body} />
+            <Thumbnail url={image} />
             {updatedAt ? (
               <span className="text-xs text-muted-foreground">edited</span>
             ) : null}
@@ -79,38 +81,36 @@ const Message = ({
 
   return (
     <div className="flex flex-col gap-2 p-1.5 px-5 hover:bg-gray-100/60 group relative">
-      <div className="flex items-start gap2">
+      <div className="flex items-start gap-2">
         <button>
-          <Avatar className="size-5 rounded-md mr-1">
-            <AvatarImage className="rounded-md" src={authorImage} />
-            <AvatarFallback className="rounded-md">
-              {avatarFallback}
-            </AvatarFallback>
+          <Avatar>
+            <AvatarImage src={authorImage} />
+            <AvatarFallback>{avatarFallback}</AvatarFallback>
           </Avatar>
         </button>
-      </div>
 
-      <div className="flex flex-col w-full overflow-hidden">
-        <div className="text-sm">
-          <button
-            onClick={() => {}}
-            className="font-bold text-primary hover:underline"
-          >
-            {authorName}
-          </button>
-          <span>&nbsp;&nbsp;</span>
-
-          <Hint label={formatFullTime(new Date(createdAt))}>
-            <button className="text-xs text-muted-foreground hover:underline">
-              {format(new Date(createdAt), "h:mm a")}
+        <div className="flex flex-col w-full overflow-hidden">
+          <div className="text-sm">
+            <button
+              onClick={() => {}}
+              className="font-bold text-primary hover:underline"
+            >
+              {authorName}
             </button>
-          </Hint>
-        </div>
-        <Renderer value={body} />
+            <span>&nbsp;&nbsp;</span>
 
-        {updatedAt ? (
-          <span className="text-xs text-muted-foreground">edited</span>
-        ) : null}
+            <Hint label={formatFullTime(new Date(createdAt))}>
+              <button className="text-xs text-muted-foreground hover:underline">
+                {format(new Date(createdAt), "h:mm a")}
+              </button>
+            </Hint>
+          </div>
+          <Renderer value={body} />
+          <Thumbnail url={image} />
+          {updatedAt ? (
+            <span className="text-xs text-muted-foreground">edited</span>
+          ) : null}
+        </div>
       </div>
     </div>
   );

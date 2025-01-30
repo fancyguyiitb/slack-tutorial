@@ -7,6 +7,11 @@ import {
   isYesterday,
 } from "date-fns";
 import Message from "./message";
+import ChannelHero from "./channel-hero";
+import { useState } from "react";
+import { Id } from "../../convex/_generated/dataModel";
+import { useWorkspaceId } from "@/hooks/use-workspace-id";
+import { useCurrentMember } from "@/features/members/api/use-current-member";
 
 interface MessageListProps {
   memberName?: string;
@@ -39,7 +44,12 @@ const MessageList = ({
   loadMore,
   isLoadingMore,
   canLoadMore,
+  channelCreationTime,
 }: MessageListProps) => {
+  const [editingId, setEditingId] = useState<Id<"messages"> | null>(null);
+  const workspaceId = useWorkspaceId();
+  const { data: currentMember } = useCurrentMember({ workspaceId });
+
   //grouping messaged based on when sent
   const groupedMessages = data?.reduce(
     (groups, message) => {
@@ -83,7 +93,7 @@ const MessageList = ({
                 key={message._id}
                 id={message._id}
                 memberId={message.memberId}
-                isAuthor={false}
+                isAuthor={message.memberId === currentMember?._id}
                 authorName={message.user.name}
                 authorImage={message.user.image}
                 reactions={message.reactions}
@@ -94,15 +104,19 @@ const MessageList = ({
                 threadCount={message.threadCount}
                 threadImage={message.threadImage}
                 threadTimestamp={message.threadTimeStamp}
-                isEditing={false}
-                setEditingId={() => {}}
+                isEditing={editingId === message._id}
+                setEditingId={setEditingId}
                 isCompact={isCompact}
-                hideThreadButton={false}
+                hideThreadButton={variant === "thread"}
               />
             );
           })}
         </div>
       ))}
+
+      {variant === "channel" && channelName && channelCreationTime && (
+        <ChannelHero name={channelName} creationTime={channelCreationTime} />
+      )}
     </div>
   );
 };
