@@ -10,6 +10,8 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import useConfirm from "@/hooks/use-confirm";
 import { useRemoveMessage } from "@/features/messages/api/use-delete-message";
+import { useToggleReaction } from "@/features/reactions/api/use-toggle-reaction";
+import Reactions from "./reactions";
 
 const Renderer = dynamic(() => import("@/components/renderer"), { ssr: false });
 const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
@@ -68,12 +70,25 @@ const Message = ({
     useUpdateMessage();
   const { mutate: removeMessage, isPending: isRemovingMessage } =
     useRemoveMessage();
+  const { mutate: toggleReaction, isPending: isTogglingReaction } =
+    useToggleReaction();
   const [ConfirmDialog, confirm] = useConfirm(
     "Delete Message",
     "Are you sure you want to delete this message?"
   );
 
   const isPending = isUpdatingMessage;
+
+  const handleReaction = (value: string) => {
+    toggleReaction(
+      { messageId: id, value },
+      {
+        onError() {
+          toast.error("Failed to add reaction");
+        },
+      }
+    );
+  };
 
   const handleDelete = async () => {
     const ok = await confirm();
@@ -147,6 +162,10 @@ const Message = ({
                     (edited)
                   </span>
                 ) : null}
+
+
+
+                <Reactions data={reactions} onChange={handleReaction}/>
               </div>
             )}
           </div>
@@ -159,7 +178,7 @@ const Message = ({
               handleThread={() => {}}
               handleDelete={handleDelete}
               hideThreadButton={hideThreadButton}
-              handleReaction={() => {}}
+              handleReaction={handleReaction}
             />
           )}
         </div>
@@ -218,6 +237,8 @@ const Message = ({
               {updatedAt ? (
                 <span className="text-xs text-muted-foreground">(edited)</span>
               ) : null}
+
+              <Reactions data={reactions} onChange={handleReaction}/>
             </div>
           )}
         </div>
@@ -230,7 +251,7 @@ const Message = ({
             handleThread={() => {}}
             handleDelete={handleDelete}
             hideThreadButton={hideThreadButton}
-            handleReaction={() => {}}
+            handleReaction={handleReaction}
           />
         )}
       </div>
