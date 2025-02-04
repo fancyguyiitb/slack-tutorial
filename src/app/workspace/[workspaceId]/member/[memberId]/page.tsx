@@ -4,9 +4,10 @@ import { useCreateOrGetConversation } from "@/features/conversations/api/use-cre
 import { useMemberId } from "@/hooks/use-member-id";
 import { useWorkspaceId } from "@/hooks/use-workspace-id";
 import { AlertTriangle, Loader } from "lucide-react";
-import { stringify } from "querystring";
 import { useEffect, useState } from "react";
 import { Id } from "../../../../../../convex/_generated/dataModel";
+import { toast } from "sonner";
+import Conversation from "./converstaion";
 
 const MemberIdPage = () => {
   const workspaceId = useWorkspaceId();
@@ -15,10 +16,20 @@ const MemberIdPage = () => {
   const [conversationId, setConversationId] =
     useState<Id<"conversations"> | null>(null);
 
-  const { data, mutate, isPending } = useCreateOrGetConversation();
+  const { mutate, isPending } = useCreateOrGetConversation();
 
   useEffect(() => {
-    mutate({ workspaceId, memberId });
+    mutate(
+      { workspaceId, memberId },
+      {
+        onSuccess: (data) => {
+          setConversationId(data);
+        },
+        onError: () => {
+          toast.error("Failed to create or fetch conversation");
+        },
+      }
+    );
   }, [memberId, workspaceId, mutate]);
 
   if (isPending) {
@@ -29,7 +40,7 @@ const MemberIdPage = () => {
     );
   }
 
-  if (!data) {
+  if (!conversationId) {
     return (
       <div className="flex flex-col gap-y-2 h-full items-center justify-center">
         <AlertTriangle className="size-5 text-muted-foreground" />
@@ -40,7 +51,7 @@ const MemberIdPage = () => {
     );
   }
 
-  return <div>MemberIdPage {JSON.stringify(data)} </div>;
+  return <Conversation id={conversationId} />;
 };
 
 export default MemberIdPage;

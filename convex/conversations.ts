@@ -43,7 +43,7 @@ export const createOrGet = mutation({
       )
       .unique();
 
-    if (existingConversation) return existingConversation;
+    if (existingConversation) return existingConversation._id;
 
     //if no existing conversation, create a new one
     const conversationId = await ctx.db.insert("conversations", {
@@ -52,10 +52,6 @@ export const createOrGet = mutation({
       memberTwoId: otherMember._id,
     });
 
-    const conversation = await ctx.db.get(conversationId);
-
-    if(!conversation) throw new Error("Conversation not found");
-
-    return conversation;
+    return conversationId;
   },
 });
