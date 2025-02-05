@@ -18,6 +18,7 @@ const populateThread = async (ctx: QueryCtx, messageId: Id<"messages">) => {
       count: 0,
       image: undefined,
       timestamp: 0,
+      name: "",
     };
   }
 
@@ -29,6 +30,7 @@ const populateThread = async (ctx: QueryCtx, messageId: Id<"messages">) => {
       count: 0,
       image: undefined,
       timestamp: 0,
+      name: "",
     };
   }
 
@@ -38,6 +40,7 @@ const populateThread = async (ctx: QueryCtx, messageId: Id<"messages">) => {
     count: messages.length,
     image: lastMessageUser?.image,
     timestamp: lastMessageUser?._creationTime,
+    name: lastMessageUser?.name,
   };
 };
 
@@ -145,7 +148,7 @@ export const getById = query({
 
     //member that is currently trying to access this endpoint
     const currentMember = await getMember(ctx, message.workspaceId, userId);
-    if (!currentMember) return null; 
+    if (!currentMember) return null;
 
     //member that actually wrote the message
     const member = await populateMember(ctx, message.memberId);
@@ -305,6 +308,7 @@ export const get = query({
                 reactions: reactionsWithOutMemberIdProperty,
                 threadCount: thread.count,
                 threadImage: thread.image,
+                threadName: thread.name,
                 threadTimeStamp: thread.timestamp,
               };
             })
