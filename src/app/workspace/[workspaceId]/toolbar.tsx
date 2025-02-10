@@ -2,21 +2,21 @@ import { Button } from "@/components/ui/button";
 import { useGetWorkspace } from "@/features/workspaces/api/use-get-workspace";
 import { useWorkspaceId } from "@/hooks/use-workspace-id";
 import { Info, Search } from "lucide-react";
-import {
-  Command,
-  CommandDialog,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-  CommandShortcut,
-} from "@/components/ui/command";
-import { useState } from "react";
+// import {
+//   Command,
+//   CommandDialog,
+//   CommandEmpty,
+//   CommandGroup,
+//   CommandInput,
+//   CommandItem,
+//   CommandList,
+//   CommandSeparator,
+//   CommandShortcut,
+// } from "@/components/ui/command";
+// import { useState } from "react";
 
 const Toolbar = () => {
-  const [open, setOpen] = useState(false);
+  // const [open, setOpen] = useState(false);
   const workspaceId = useWorkspaceId();
   const { data } = useGetWorkspace({ id: workspaceId });
   return (
@@ -29,7 +29,7 @@ const Toolbar = () => {
         >
           <Search
             className="size-4 text-white mr-2"
-            onClick={() => setOpen(true)}
+            onClick={() => {}}
           />
           <span className="text-white text-xs">Search {data?.name}</span>
         </Button>
