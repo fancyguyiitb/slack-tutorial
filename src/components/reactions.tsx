@@ -26,7 +26,7 @@ const Reactions = ({ data, onChange }: ReactionsProps) => {
   return (
     <div className="flex items-center gap-1 mt-1 mb-1">
       {data.map((reaction) => (
-        <>
+        <div key={reaction._id}>
           <Hint
             label={`${reaction.count} ${reaction.count === 1 ? "person" : "people"} reacted with ${reaction.value}`}
             key={reaction._id}
@@ -52,12 +52,12 @@ const Reactions = ({ data, onChange }: ReactionsProps) => {
               </span>
             </button>
           </Hint>
-        </>
+        </div>
       ))}
 
       <EmojiPopover
         hint="Add reaction"
-        onEmojiSelect={(emoji) => onChange(emoji.native)}
+        onEmojiSelect={(emoji) => onChange(emoji)}
       >
         <button className="h-7 px-3 rounded-full bg-slate-200/70 border border-transparent hover:border-slate-500 text-slate-800 flex items-center gap-x-1">
           <MdOutlineAddReaction className="size-4" />
